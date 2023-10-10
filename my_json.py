@@ -27,7 +27,7 @@ def obtener_partidos_random():
         return resultado_partido
     else:
         print("Error al obtener los partidos de la Copa del Mundo")
-        return None
+        obtener_partidos_random.config(text = resultado_partido)
 
 # Ejemplo de cómo usar la función
 partido_aleatorio = obtener_partidos_random()
