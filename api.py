@@ -1,49 +1,47 @@
-import requests
 import tkinter as tk
+from tkinter import ttk
+import requests
 
-class Clima:
-    def __init__(self, ciudad):
-        self.ciudad = ciudad
-        self.api_key = "a724f8d8890824aa1326eb56e175ecf1"
+def obtener_datos_api():
+    api_url = "https://worldcupjson.net/matches/"
+    response = requests.get(api_url)
+    data = response.json()  # Parsear la respuesta JSON
 
-    def obtener_clima(self):
-        url = f"http://api.openweathermap.org/data/2.5/weather?q={self.ciudad}&appid={self.api_key}&units=metric"
-        respuesta = requests.get(url)
-        clima_datos = respuesta.json()
-        print(respuesta.json())
-        if clima_datos["cod"] == 200:
-            temperatura = clima_datos["main"]["temp"]
-            humedad = clima_datos["main"]["humidity"]
-            descripcion = clima_datos["weather"][0]["description"]
-            resultado = f"Ciudad: {self.ciudad}\n"
-            resultado += f"Temperatura: {temperatura}°C\n"
-            resultado += f"Humedad: {humedad}%\n"
-            resultado += f"Descripción del clima: {descripcion}"
-        elif clima_datos["cod"] == "400":
-            resultado = "No se ha escrito ninguna ciudad"      
-        else:
-            resultado = f"Ciudad: {self.ciudad}?\n"
-            resultado += "No se ha encontro esta ciudad"
+    # Filtrar y organizar los datos que deseas mostrar en el Treeview
+    partidos = []
+    for partido in data:
+        equipo_local = partido["home_team_country"]
+        goles_local = partido["home_team"]["goals"]
+        equipo_visitante = partido["away_team_country"]
+        goles_visitante = partido["away_team"]["goals"]
+        partidos.append({"equipo_local": equipo_local, "goles_local": goles_local, "equipo_visitante": equipo_visitante, "goles_visitante": goles_visitante})
 
-        etiqueta_resultado.config(text=resultado)
+    return partidos
+
+def mostrar_en_treeview():
+    datos = obtener_datos_api()
+
+    # Borrar elementos anteriores del Treeview
+    for item in tabla.get_children():
+        tabla.delete(item)
+
+    # Agregar los nuevos datos al Treeview
+    for dato in datos:
+        tabla.insert("", "end", values=(dato["equipo_local"], dato["goles_local"], dato["equipo_visitante"], dato["goles_visitante"]))
 
 ventana = tk.Tk()
-ventana.title("API Clima")
+ventana.title("Partidos de la Copa del Mundo")
 
-def obtener_clima():
-    ciudad = entrada_ciudad.get()
-    clima = Clima(ciudad)
-    clima.obtener_clima()
+tabla = ttk.Treeview(columns=("Equipo Local", "Goles Local", "Equipo Visitante", "Goles Visitante"))
 
-etiqueta_ciudad = tk.Label(ventana, text="Ingrese una ciudad:")
-etiqueta_ciudad.pack()
-entrada_ciudad = tk.Entry(ventana)
-entrada_ciudad.pack()
-    
-boton_obtener_clima = tk.Button(ventana, text="Obtener Clima", command=obtener_clima)
-boton_obtener_clima.pack()
+tabla.heading("Equipo Local", text="Equipo Local")
+tabla.heading("Goles Local", text="Goles Local")
+tabla.heading("Equipo Visitante", text="Equipo Visitante")
+tabla.heading("Goles Visitante", text="Goles Visitante")
 
-etiqueta_resultado = tk.Label(ventana)
-etiqueta_resultado.pack()
+tabla.grid()
+
+boton_obtener_datos = tk.Button(ventana, text="Obtener Datos", command=mostrar_en_treeview)
+boton_obtener_datos.grid()
 
 ventana.mainloop()
