@@ -1,5 +1,5 @@
 import requests
-import random
+
 
 def obtener_partidos():
     api_url = "https://worldcupjson.net/matches/"

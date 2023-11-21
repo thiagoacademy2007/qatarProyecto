@@ -26,11 +26,11 @@ class Partidos:
 
 # Crear una ventana de Tkinter
 ventana = tk.Tk()
-ventana.title("Partidos/Leagues Cup")
-ventana.geometry("800x400")
+ventana.title("Qatar")
+ventana.geometry("1000x600")
 
 # Crear un Treeview para mostrar la tabla de partidos y resultados
-tree = ttk.Treeview(ventana, columns=("ID", "Equipo Local", "Goles Local", "Equipo Visitante", "Goles Visitante"))
+tree = ttk.Treeview(ventana, columns=("ID", "Equipo Local", "Goles Local", "Equipo Visitante", "Goles Visitante"), height=30)
 tree.heading("#1", text="ID")
 tree.heading("#2", text="Equipo Local")
 tree.heading("#3", text="Goles Local")

@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-import my_json
+from my_json import obtener_partidos
+from tkinter import messagebox
 
 def agregar_partido():
     equipo_local = entrada_equipo_local.get()
@@ -8,12 +9,19 @@ def agregar_partido():
     goles_local = entrada_goles_local.get()
     goles_visitante = entrada_goles_visitante.get()
     
-    # Asegúrate de validar y procesar los datos según sea necesario
-    # Por ejemplo, puedes convertir los goles en enteros si es necesario
+    partidos_api = obtener_partidos()
 
-    # Agregar los datos del partido al Treeview
-    tabla.insert("", "end", values=(equipo_local, goles_local, equipo_visitante, goles_visitante))
-    
+    partido_encontrado = False
+    for partido in partidos_api:
+         if equipo_local == partido["equipo_local"] and equipo_visitante == partido["equipo_visitante"]:
+            partido_encontrado = True
+            break
+
+    if partido_encontrado:
+        tabla.insert("", "end", values=(equipo_local, goles_local, equipo_visitante, goles_visitante))
+    else:
+        tk.messagebox.showerror("Error", "El partido no existe en la API")
+
 ventana = tk.Tk()
 ventana.title("Qatar 2022")
 
@@ -50,9 +58,5 @@ entrada_goles_visitante.grid()
 # Botón para agregar partido
 boton_agregar_partido = tk.Button(ventana, text="Agregar Partido", command=agregar_partido)
 boton_agregar_partido.grid()
-
-# Botón para obtener datos aleatorios
-boton_obtener_datos = tk.Button(ventana, text="Obtener Partidos Aleatorios", command=my_json.obtener_partidos)
-boton_obtener_datos.grid()
 
 ventana.mainloop()
